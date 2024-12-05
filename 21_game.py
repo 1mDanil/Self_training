@@ -1,7 +1,7 @@
 import random
 from random import choice
 
-Card_deck = [1,2, 3, 4, 5, 6, 7, 8, 9, 10]  * 4
+Card_deck = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  * 4
 
 wins = 0
 loses = 0
@@ -10,7 +10,7 @@ def deal(deck_func):                            #Выдача начальных
     hands = []
     random.shuffle(deck_func)
     for i in range(2):
-        card = deck_func.pop
+        card = deck_func.pop()
         if card == 11:
             card = 'A'
         if card == 10:
@@ -23,8 +23,9 @@ def deal(deck_func):                            #Выдача начальных
     return hands
 
 def play_again():                                #Продолжение игры
+    Card_deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] * 4
     print('---------------------------------------------------------------------------------------')
-    again = input('Нужно добрать карту? (Y/N) : ')
+    again = input('Начать новую игру? (Y/N) : ')
     print('---------------------------------------------------------------------------------------')
     if again == 'Y':
         game()
@@ -62,7 +63,8 @@ def hit(hand):                           #Добавляю карты
     hand.append(card)
     return hand
 
-def print_result(player_hand, dealer_hand):           #Вывожу результаты
+
+def score(dealer_hand, player_hand):           #Начинаю считать очки в конце раунда и сравнивать у кого больше
     global wins
     global loses
     print('Результаты раунда')
@@ -71,56 +73,31 @@ def print_result(player_hand, dealer_hand):           #Вывожу резуль
     print('У Вас на руке: ' + str(player_hand) + 'сумма очков равна: ' + str(total(player_hand)))
     print('---------------------------------------------------------------------------------------')
     if total(player_hand) == 21:
-        print_result(dealer_hand, player_hand)
-        print('---------------------------------------------------------------------------------------')
-        print('Congrats, you win')
-        print('---------------------------------------------------------------------------------------')
-        wins += 1
-        play_again()
-    elif total(dealer_hand) == 21:
-        print_result(dealer_hand, player_hand)
-        print('---------------------------------------------------------------------------------------')
-        print('You lose this game!!!!!xd')
-        print('---------------------------------------------------------------------------------------')
-        loses += 1
-        play_again()
-    elif total(dealer_hand) == total(player_hand):
-        print_result(player_hand,dealer_hand)
-        print('---------------------------------------------------------------------------------------')
-        print('Ну тут у вас ничья, нужно переиграть!')
-        print('---------------------------------------------------------------------------------------')
-        play_again()
-
-
-def score(dealer_hand, player_hand):           #Начинаю считать очки в конце раунда и сравнивать у кого больше
-    global wins
-    global loses
-    if total(player_hand) == 21:
-        print_result(dealer_hand, player_hand)
+        #print_result(dealer_hand, player_hand)
         print('---------------------------------------------------------------------------------------')
         print('You have 21, you win')
         print('---------------------------------------------------------------------------------------')
         wins += 1
     elif total(dealer_hand) == 21:
-        print_result(dealer_hand, player_hand)
+        #print_result(dealer_hand, player_hand)
         print('---------------------------------------------------------------------------------------')
         print('Sorry, but you lose, try again')
         print('---------------------------------------------------------------------------------------')
         loses += 1
     elif total(player_hand) < total(dealer_hand):
-        print_result(dealer_hand, player_hand)
+        #print_result(dealer_hand, player_hand)
         print('---------------------------------------------------------------------------------------')
         print('У вас меньше очков чем у диллера, так что вы проиграли')
         print('---------------------------------------------------------------------------------------')
         loses += 1
     elif total(player_hand) > total(dealer_hand):
-        print_result(dealer_hand, player_hand)
+        #print_result(dealer_hand, player_hand)
         print('---------------------------------------------------------------------------------------')
         print('У вас хоть и недобор, но очков у вас больше, поздравляю')
         print('---------------------------------------------------------------------------------------')
         wins += 1
     elif total(player_hand) == total(dealer_hand):
-        print_result(dealer_hand, player_hand)
+        #print_result(dealer_hand, player_hand)
         print('---------------------------------------------------------------------------------------')
         print('У вас поровну, играйте снова')
         print('---------------------------------------------------------------------------------------')
@@ -129,18 +106,20 @@ def game():                                 #Финалочка
     global wins
     global loses
     print('---------------------------------------------------------------------------------------')
-    print('Начать игру')
+    print('Начало игры')
     print('---------------------------------------------------------------------------------------')
     dealer_hand = deal(Card_deck)
     player_hand = deal(Card_deck)
     print('---------------------------------------------------------------------------------------')
-    print('У раздающего: ' + str(dealer_hand[0]))
+    print('У раздающего: ' + str(dealer_hand) + 'сумма очков диллера равна ' + str(total(dealer_hand)))
     print('---------------------------------------------------------------------------------------')
     print('---------------------------------------------------------------------------------------')
-    print('У вас на руках: ' + str(player_hand[0]) + 'ваша сумма очков составляет ' + str(total(player_hand)))
+    print('У вас на руках: ' + str(player_hand) + ' ваша сумма очков составляет ' + str(total(player_hand)))
     print('---------------------------------------------------------------------------------------')
 
-    while True:
+    cont_game = True
+    while cont_game:
+        choice = input()
         if choice == 'Y':
             hit(player_hand)
             print('---------------------------------------------------------------------------------------')
@@ -161,11 +140,12 @@ def game():                                 #Финалочка
                 print('---------------------------------------------------------------------------------------')
                 if total(dealer_hand) > 21:
                     print('---------------------------------------------------------------------------------------')
-                    print('У диллера перебор')
+                    print('У диллера перебор, ' + str(total(dealer_hand)) + ' вы победили! ')
                     print('---------------------------------------------------------------------------------------')
                     wins += 1
                     play_again()
-                else:
-                    score(dealer_hand, player_hand)
-                    play_again()
+            score(dealer_hand, player_hand)
+            play_again()
+            cont_game = False
+
 game()
